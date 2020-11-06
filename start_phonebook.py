@@ -1,153 +1,280 @@
 # Author: Artem Osmina
 # Description: Simple Phone Book
+# config and save/load contacts file
 
-# phone book
-phonebook = {'JHON': '123456789123',
-             'MARIA': '222444666888',
-            }
+import configparser
+import json
+import pickle
+from sys import exit
 
-# Messages for print
-MSG_NOT_FOUND_NAME = 'Not found name: "{0}"'
-MSG_OPERATION_WITH_CONTACT = '{0} contact name: "{1}" phone: {2}'
-MSG_VALUE_NOT_DIGIT = 'Value: {0} is not digit'
-MSG_NAME_DELETE = 'Delete name: "{0}"'
-MSG_NAME_PHONE = 'Name: {0} phone: {1}'
-MSG_NOT_FOUND_CMD = 'Not found command: {0}'
-MSG_INPUT_CMD = 'input command:'
-MSG_INPUT_NAME = 'input name:'
-MSG_INPUT_PHONE = 'input phone:'
-MSG_INPUT_SOME_DATA = 'Please input some data'
-HELP = '''
-C name phone - create contact
-R name - get phone
-U name phone - update contact
-D name - delete contact
-A - list all contacts
-H - this help
-Q - quit
-'''
+config = configparser.ConfigParser()
+reader = config.read('config.ini')
+
+DUMP_TYPE = config['COMMON']['DUMP_TYPE']
+DUMP_FILE = config['COMMON']['DUMP_FILE']
+
+messages = config['MESSAGES']
+MSG_NOT_FOUND_NAME = messages['MSG_NOT_FOUND_NAME']
+MSG_ACTION_WITH_CONTACT = messages['MSG_ACTION_WITH_CONTACT']
+MSG_VALUE_NOT_DIGIT = messages['MSG_VALUE_NOT_DIGIT']
+MSG_NAME_DELETE = messages['MSG_NAME_DELETE']
+MSG_NAME_PHONE = messages['MSG_NAME_PHONE']
+MSG_NOT_FOUND_CMD = messages['MSG_NOT_FOUND_CMD']
+MSG_INPUT_CMD = messages['MSG_INPUT_CMD']
+MSG_INPUT_NAME = messages['MSG_INPUT_NAME']
+MSG_INPUT_PHONE = messages['MSG_INPUT_PHONE']
+MSG_INPUT_SOME_DATA = messages['MSG_INPUT_SOME_DATA']
+HELP = messages['HELP']
+MSG_UNKNOWN_DUMP_TYPE = messages['MSG_UNKNOWN_DUMP_TYPE']
+MSG_CANT_LOAD_FILE = messages['MSG_CANT_LOAD_FILE']
+MSG_START_WITHOUT_DATA = messages['MSG_START_WITHOUT_DATA']
+MSG_HELLO = messages['MSG_HELLO']
+MSG_EXIT_FROM_PROGRAM = messages['MSG_EXIT_FROM_PROGRAM']
+MSG_SAVE_PHONEBOOK = messages['MSG_SAVE_PHONEBOOK']
+MSG_LOAD_PHONEBOOK = messages['MSG_LOAD_PHONEBOOK']
+
+print_ = print
+phonebook = dict()
 
 
-# repeat input if empty
+def json_get(dump_file):
+    with open(dump_file, 'rt') as f:
+        return json.loads(f.read())
+
+
+def pickle_get(dump_file):
+    with open(dump_file, 'rb') as f:
+        return pickle.loads(f.read())
+
+
+def data_get(dump_type, dump_file):
+    if dump_type == 'json':
+        return json_get(dump_file)
+    elif dump_type == 'pickle':
+        return pickle_get(dump_file)
+    raise ValueError(MSG_UNKNOWN_DUMP_TYPE.format(dump_type))
+
+
+def json_dump(data, dump_file):
+    with open(dump_file, 'wt') as f:
+        return f.write(json.dumps(data))
+
+
+def pickle_dump(data, file):
+    with open(file, 'wb') as f:
+        return f.write(pickle.dumps(data))
+
+
+def data_dump(data, dump_type, dump_file):
+    if dump_type == 'json':
+        return json_dump(data, dump_file)
+    elif dump_type == 'pickle':
+        return pickle_dump(data, dump_file)
+    raise ValueError(MSG_UNKNOWN_DUMP_TYPE.format(dump_type))
+
+
 def loop_if_empty_result(fn):
     def wrapper():
         while True:
             val = fn()
-            if len(val) > 0:
+            if val:
                 return val
-                break
-            else:
-                print(MSG_INPUT_SOME_DATA)
-    return wrapper
-
-
-def strip_upp(fn):
-    def wrapper():
-        return fn().strip().upper()
-    return wrapper
-
-
-def try_input(fn):
-    def wrapper():
-        try:
-            return fn()
-        except Exception as e:
-            print(e)
-            # except KeyboardInterrupt don't work
-            # raise KeyboardInterrupt
+            print_input_some_data()
     return wrapper
 
 
 @loop_if_empty_result
-@strip_upp
-@try_input
-def input_cmd() -> str:
-    return input(MSG_INPUT_CMD)
+def input_cmd():
+    return input(MSG_INPUT_CMD).strip().upper()
 
 
 @loop_if_empty_result
-@strip_upp
-@try_input
-def input_name() -> str:
-    return input(MSG_INPUT_NAME)
+def input_name():
+    return input(MSG_INPUT_NAME).strip().upper()
 
 
 @loop_if_empty_result
-@strip_upp
-@try_input
-def input_phone() -> str:
-    phone = input(MSG_INPUT_PHONE)
+def input_phone():
+    phone = input(MSG_INPUT_PHONE).strip().upper()
     if phone.isdigit():
         return phone
-    else:
-        print(MSG_VALUE_NOT_DIGIT.format(phone))
-        return ''
+    print_value_not_digit(phone)
 
 
-def phonebook_get(name, command='Found') -> str:
-    if phonebook.get(name):
-        print(MSG_OPERATION_WITH_CONTACT.format(command, name, phonebook.get(name)))
-        return phonebook.get(name)
-    else:
-        print(MSG_NOT_FOUND_NAME.format(name))
-        return False
+def print_value_not_digit(value):
+    print_(MSG_VALUE_NOT_DIGIT.format(value))
 
 
-def create():
-    name = input_name()
-    if not phonebook_get(name):
-        phonebook[name] = input_phone()
-        phonebook_get(name, 'Create')
+def print_start_without_data():
+    print_(MSG_CANT_LOAD_FILE, MSG_START_WITHOUT_DATA)
 
 
-def read():
-    name = input_name()
-    phonebook_get(name)
+def print_input_some_data():
+    print_(MSG_INPUT_SOME_DATA)
 
 
-def update():
-    name = input_name()
-    if phonebook_get(name):
-        phonebook[name] = input_phone()
-        phonebook_get(name, 'Update')
+def print_contact_action(action, name, phone):
+    print_(MSG_ACTION_WITH_CONTACT.format(action, name, phone))
 
 
-def delete():
-    name = input_name()
-    if phonebook_get(name):
-        phonebook.pop(name)
-        print(MSG_NAME_DELETE.format(name))
+def print_not_found(name):
+    print_(MSG_NOT_FOUND_NAME.format(name))
 
 
-def read_all():
-    for name, value in phonebook.items():
-        print(MSG_NAME_PHONE.format(name, value))
+def print_delete(name):
+    print_(MSG_NAME_DELETE.format(name))
+
+
+def print_contact(name, phone):
+    print_(MSG_NAME_PHONE.format(name, phone))
+
+
+def print_phonebook_saved():
+    print_(MSG_SAVE_PHONEBOOK)
+
+
+def print_phonebook_loaded():
+    print_(MSG_LOAD_PHONEBOOK)
 
 
 def print_help():
-    print(HELP)
+    print_(HELP)
 
 
-def quit_():
-    # exit()
+def print_not_found_cmd(cmd):
+    print_(MSG_NOT_FOUND_CMD.format(cmd))
+
+
+def print_hello():
+    print_(MSG_HELLO)
+
+
+def print_exit():
+    print_(MSG_EXIT_FROM_PROGRAM)
+
+
+def contact_create(name, phone):
+    if not contact_exists(name):
+        phonebook[name] = phone
+
+
+def contact_get(name):
+    if contact_exists(name):
+        return phonebook[name]
+
+
+def contact_update(name, phone):
+    if contact_exists(name):
+        phonebook[name] = phone
+
+
+def contact_delete(name):
+    del phonebook[name]
+
+
+def phonebook_get():
+    return phonebook
+
+
+def contact_exists(name):
+    if name in phonebook:
+        return True
+
+
+def phonebook_save():
+        return data_dump(phonebook, DUMP_TYPE, DUMP_FILE)
+
+
+def phonebook_load():
+    global phonebook
+    try:
+        phonebook = data_get(DUMP_TYPE, DUMP_FILE)
+        return True
+    except FileNotFoundError as e:
+        phonebook = dict()
+
+
+def contact_exists_notify_action(name):
+    if contact_exists(name):
+        print_contact_action('Found', name,  contact_get(name))
+        return True
+    print_not_found(name)
+
+
+def contact_create_action():
+    name = input_name()
+    if not contact_exists_notify_action(name):
+        phone = input_phone()
+        contact_create(name, phone)
+        print_contact_action('Create', name, phone)
+
+
+def contact_read_action():
+    name = input_name()
+    contact_exists_notify_action(name)
+
+
+def contact_update_action():
+    name = input_name()
+    if contact_exists_notify_action(name):
+        phone = input_phone()
+        contact_update(name, phone)
+        print_contact_action('Update', name, phone)
+
+
+def contact_delete_action():
+    name = input_name()
+    try:
+        contact_delete(name)
+        print_delete(name)
+    except KeyError:
+        print_not_found(name)
+
+
+def phonebook_read_action():
+    for name, value in phonebook_get().items():
+        print_contact(name, value)
+
+
+def phonebook_load_action():
+    if phonebook_load():
+        print_phonebook_loaded()
+    else:
+        print_start_without_data()
+
+
+def phonebook_save_action():
+    if phonebook_save():
+        print_phonebook_saved()
+    else:
+        pass
+
+
+def help_action():
+    print_help()
+
+
+def quit_action():
+    # exit() # pycharm catch exit exception
     raise KeyboardInterrupt
 
 
-action_menu = {'C': create,
-               'R': read,
-               'U': update,
-               'D': delete,
-               'A': read_all,
-               'H': print_help,
-               'Q': quit_,
+menu_action = {'C': contact_create_action,
+               'R': contact_read_action,
+               'U': contact_update_action,
+               'D': contact_delete_action,
+               'A': phonebook_read_action,
+               'S': phonebook_save_action,
+               'H': help_action,
+               'Q': quit_action,
                }
 
-
-while True:
-    print('----')
-    cmd = input_cmd()
-    fn_action = action_menu.get(cmd)
-    if fn_action:
-        fn_action()
-    else:
-        print(MSG_NOT_FOUND_CMD.format(cmd))
+try:
+    print_hello()
+    phonebook_load_action()
+    while True:
+        cmd = input_cmd()
+        menu_action.get(cmd, lambda: print_not_found_cmd(cmd))()
+finally:
+    phonebook_save_action()
+    print_exit()
