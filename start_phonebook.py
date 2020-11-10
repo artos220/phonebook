@@ -2,26 +2,26 @@
 # Description: Simple Phone Book
 # add package dumper for load/save phonebook
 
-import controler
+import controller
 import notifier
 import inputs
 
-menu_action = {'C': controler.contact_create,
-               'R': controler.contact_read,
-               'U': controler.contact_update,
-               'D': controler.contact_delete,
-               'A': controler.phonebook_read,
-               'S': controler.phonebook_save,
-               'H': controler.help_,
-               'Q': controler.quit_,
+menu_action = {'C': controller.contact_create,
+               'R': controller.contact_read,
+               'U': controller.contact_update,
+               'D': controller.contact_delete,
+               'A': controller.phonebook_read,
+               'S': controller.phonebook_save,
+               'H': controller.help_,
+               'Q': controller.quit_,
                }
 
 try:
     notifier.notify('hello')
-    controler.phonebook_load()
+    controller.phonebook_load()
     while True:
         cmd = inputs.input_cmd()
         menu_action.get(cmd, lambda: notifier.notify('not_found_cmd', cmd))()
 finally:
-    controler.phonebook_save()
+    controller.phonebook_save()
     notifier.notify('exit')
