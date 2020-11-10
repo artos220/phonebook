@@ -7,6 +7,9 @@ if config.DUMP_TYPE.lower() == 'json':
 elif config.DUMP_TYPE.lower() == 'pickle':
     from dumper import pickle_load as data_load
     from dumper import pickle_save as data_save
+elif config.DUMP_TYPE.lower() == 'csv':
+    from dumper import csv_load as data_load
+    from dumper import csv_save as data_save
 
 
 def load(filename):
