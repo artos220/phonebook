@@ -20,5 +20,6 @@ messages = {
 }
 
 
-def notify(msg_type, *args):
+def notify(msg_type: str, *args):
+    """print predefined message for msg_type and pass into it args"""
     messages[msg_type](*args)

@@ -1,9 +1,9 @@
 # Author: Artem Osmina
 # Description: Simple Phone Book
-# config and save/load contacts file
+# add package dumper for load/save phonebook
 
 import controler
-import notifications
+import notifier
 import inputs
 
 menu_action = {'C': controler.contact_create,
@@ -17,11 +17,11 @@ menu_action = {'C': controler.contact_create,
                }
 
 try:
-    notifications.notify('hello')
+    notifier.notify('hello')
     controler.phonebook_load()
     while True:
         cmd = inputs.input_cmd()
-        menu_action.get(cmd, lambda: notifications.notify('not_found_cmd', cmd))()
+        menu_action.get(cmd, lambda: notifier.notify('not_found_cmd', cmd))()
 finally:
     controler.phonebook_save()
-    notifications.notify('exit')
+    notifier.notify('exit')

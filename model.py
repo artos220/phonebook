@@ -1,7 +1,3 @@
-import load_dump
-import config_reader as config
-import messages as constants
-
 phonebook = dict()
 
 
@@ -25,29 +21,12 @@ def phonebook_get():
     return phonebook
 
 
+def phonebook_set(data):
+    global phonebook
+    phonebook = data
+
+
 def contact_exists(name) -> bool:
     if name in phonebook:
         return True
     return False
-
-
-# transfer into package
-if config.DUMP_TYPE.lower() == 'json':
-    data_get, data_dump = load_dump.json_get, load_dump.json_dump
-elif config.DUMP_TYPE.lower() == 'pickle':
-    data_get, data_dump = load_dump.pickle_get, load_dump.pickle_dump
-else:
-    ValueError(constants.MSG_UNKNOWN_DUMP_TYPE.format(config.DUMP_TYPE))  # hmm ?
-
-
-def phonebook_save():
-    return data_dump(phonebook, config.DUMP_FILE) # transfer parameter DUMP_FILE into package
-
-
-def phonebook_load():
-    global phonebook
-    try:
-        phonebook = data_get(config.DUMP_FILE)
-    except FileNotFoundError:
-        phonebook = dict()
-        raise

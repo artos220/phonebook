@@ -1,4 +1,4 @@
-import notifications
+import notifier
 import messages as constants
 
 
@@ -7,7 +7,7 @@ def input_cmd():
         cmd = input(constants.MSG_INPUT_CMD).strip().upper()
         if cmd:
             return cmd
-        notifications.notify('input_some_data')
+        notifier.notify('input_some_data')
 
 
 def input_name():
@@ -15,7 +15,7 @@ def input_name():
         name = input(constants.MSG_INPUT_NAME).strip().upper()
         if name:
             return name
-        notifications.notify('input_some_data')
+        notifier.notify('input_some_data')
 
 
 def input_phone():
@@ -24,5 +24,5 @@ def input_phone():
         if phone:
             if phone.isdigit():
                 return phone
-            notifications.notify('value_not_digit', phone)
-        notifications.notify('input_some_data')
+            notifier.notify('value_not_digit', phone)
+        notifier.notify('input_some_data')
