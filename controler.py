@@ -5,7 +5,7 @@ import config_reader as config
 import configured_dumper as dumper
 
 
-def contact_exists_notify(name):
+def contact_found_notify(name):
     try:
         phone = model.contact_get(name)
         notifier.notify('contact_action', 'Found', name, phone)
@@ -17,7 +17,7 @@ def contact_exists_notify(name):
 def contact_create():
     name = inputs.input_name()
     try:
-        contact_exists_notify(name)
+        contact_found_notify(name)
     except KeyError:
         phone = inputs.input_phone()
         model.contact_create(name, phone)
@@ -27,7 +27,7 @@ def contact_create():
 def contact_read():
     try:
         name = inputs.input_name()
-        contact_exists_notify(name)
+        contact_found_notify(name)
     except KeyError:
         pass
 
@@ -35,7 +35,7 @@ def contact_read():
 def contact_update():
     try:
         name = inputs.input_name()
-        contact_exists_notify(name)
+        contact_found_notify(name)
         phone = inputs.input_phone()
         model.contact_update(name, phone)
         notifier.notify('contact_action', 'Update', name, phone)
@@ -46,7 +46,7 @@ def contact_update():
 def contact_delete():
     try:
         name = inputs.input_name()
-        contact_exists_notify(name)
+        contact_found_notify(name)
         model.contact_delete(name)
         notifier.notify('delete', name)
     except KeyError:
