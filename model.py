@@ -1,4 +1,4 @@
-phonebook = dict()
+phonebook = {}
 
 
 def contact_create(name, phone):
@@ -27,6 +27,4 @@ def phonebook_set(data):
 
 
 def contact_exists(name) -> bool:
-    if name in phonebook:
-        return True
-    return False
+    name in phonebook
