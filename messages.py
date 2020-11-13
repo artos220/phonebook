@@ -7,6 +7,7 @@ MSG_NOT_FOUND_CMD = 'Not found command: {0}'
 MSG_INPUT_CMD = 'input command:'
 MSG_INPUT_NAME = 'input name:'
 MSG_INPUT_PHONE = 'input phone:'
+MSG_INPUT_EMAIL = 'input email:'
 MSG_INPUT_SOME_DATA = 'Please input some data'
 HELP = '''C name phone - create contact
 R name - get phone
