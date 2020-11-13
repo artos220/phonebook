@@ -4,10 +4,12 @@ import model
 import config_reader as config
 import configured_dumper as dumper
 
+phonebook = model.Phonebook({})
+
 
 def contact_found_notify(name):
     try:
-        phone = model.contact_get(name)
+        phone = phonebook.contact_get(name)
         notifier.notify('contact_action', 'Found', name, phone)
     except KeyError:
         notifier.notify('not_found', name)
@@ -20,7 +22,8 @@ def contact_create():
         contact_found_notify(name)
     except KeyError:
         phone = inputs.input_phone()
-        model.contact_create(name, phone)
+        email = inputs.input_email()
+        phonebook.contact_create([name, phone, email])
         notifier.notify('contact_action', 'Create', name, phone)
 
 
@@ -37,7 +40,8 @@ def contact_update():
         name = inputs.input_name()
         contact_found_notify(name)
         phone = inputs.input_phone()
-        model.contact_update(name, phone)
+        email = inputs.input_email()
+        phonebook.contact_update([name, phone, email])
         notifier.notify('contact_action', 'Update', name, phone)
     except KeyError:
         pass
@@ -47,20 +51,20 @@ def contact_delete():
     try:
         name = inputs.input_name()
         contact_found_notify(name)
-        model.contact_delete(name)
+        phonebook.contact_delete(name)
         notifier.notify('delete', name)
     except KeyError:
         pass
 
 
 def phonebook_read():
-    for name, value in model.phonebook_get().items():
+    for name, value in phonebook.phonebook_get().items():
         notifier.notify('contact', name, value)
 
 
 def phonebook_load():
     try:
-        model.phonebook_set(dumper.load(config.DUMP_FILE))
+        phonebook.phonebook_set(dumper.load(config.DUMP_FILE))
         notifier.notify('phonebook_loaded')
     except FileNotFoundError:
         notifier.notify('start_without_data')
@@ -68,7 +72,7 @@ def phonebook_load():
 
 def phonebook_save():
     try:
-        dumper.save(model.phonebook_get(), config.DUMP_FILE)
+        dumper.save(phonebook.phonebook_get(), config.DUMP_FILE)
         notifier.notify('phonebook_saved')
     except Exception:
         notifier.notify('phonebook_not_saved')
