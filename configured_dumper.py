@@ -10,8 +10,8 @@ elif config.DUMP_TYPE.lower() == 'csv':
 
 
 def load(filename):
-    return DataDumper.load(filename)
+    return DataDumper(filename).load()
 
 
 def save(data, filename):
-    return DataDumper.save(data, filename)
+    return DataDumper(filename).save(data)

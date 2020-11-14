@@ -64,7 +64,7 @@ def phonebook_read():
 
 def phonebook_load():
     try:
-        phonebook.set(dumper.DataDumper(config.DUMP_FILE).load())
+        phonebook.set(dumper.load(config.DUMP_FILE))
         notifier.notify('phonebook_loaded')
     except FileNotFoundError:
         notifier.notify('start_without_data')
@@ -72,7 +72,7 @@ def phonebook_load():
 
 def phonebook_save():
     try:
-        dumper.DataDumper(config.DUMP_FILE).save(phonebook.get())
+        dumper.save(phonebook.get(), config.DUMP_FILE)
         notifier.notify('phonebook_saved')
     except Exception:
         notifier.notify('phonebook_not_saved')

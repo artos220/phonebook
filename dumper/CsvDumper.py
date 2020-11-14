@@ -11,7 +11,6 @@ class CsvDumper:
             data = {}
             for row in reader:
                 data[row[0]] = row[1]
-
             return data
 
     def save(self, data):
