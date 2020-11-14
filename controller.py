@@ -17,8 +17,8 @@ def contact_found_notify(name):
 
 
 def contact_create():
+    name = inputs.input_name()
     try:
-        name = inputs.input_name()
         contact_found_notify(name)
     except KeyError:
         phone = inputs.input_phone()
@@ -64,7 +64,7 @@ def phonebook_read():
 
 def phonebook_load():
     try:
-        phonebook.set(dumper.load(config.DUMP_FILE))
+        phonebook.set(dumper.DataDumper(config.DUMP_FILE).load())
         notifier.notify('phonebook_loaded')
     except FileNotFoundError:
         notifier.notify('start_without_data')
@@ -72,7 +72,7 @@ def phonebook_load():
 
 def phonebook_save():
     try:
-        dumper.save(phonebook.get(), config.DUMP_FILE)
+        dumper.DataDumper(config.DUMP_FILE).save(phonebook.get())
         notifier.notify('phonebook_saved')
     except Exception:
         notifier.notify('phonebook_not_saved')

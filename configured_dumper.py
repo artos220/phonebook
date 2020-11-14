@@ -2,19 +2,16 @@ import config_reader as config
 
 
 if config.DUMP_TYPE.lower() == 'json':
-    from dumper import json_load as data_load
-    from dumper import json_save as data_save
+    from dumper.JsonDumper import JsonDumper as DataDumper
 elif config.DUMP_TYPE.lower() == 'pickle':
-    from dumper import pickle_load as data_load
-    from dumper import pickle_save as data_save
+    from dumper.PickleDumper import PickleDumper as DataDumper
 elif config.DUMP_TYPE.lower() == 'csv':
-    from dumper import csv_load as data_load
-    from dumper import csv_save as data_save
+    from dumper.CsvDumper import CsvDumper as DataDumper
 
 
 def load(filename):
-    return data_load.load(filename)
+    return DataDumper.load(filename)
 
 
 def save(data, filename):
-    return data_save.save(data, filename)
+    return DataDumper.save(data, filename)
