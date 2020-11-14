@@ -1,10 +1,10 @@
 import notifier
 import inputs
-import model
 import config_reader as config
 import configured_dumper as dumper
+from model import Phonebook, Contact
 
-phonebook = model.Phonebook({})
+phonebook = Phonebook({})
 
 
 def contact_found_notify(name):
@@ -17,13 +17,13 @@ def contact_found_notify(name):
 
 
 def contact_create():
-    name = inputs.input_name()
     try:
+        name = inputs.input_name()
         contact_found_notify(name)
     except KeyError:
         phone = inputs.input_phone()
         email = inputs.input_email()
-        phonebook.contact_create([name, phone, email])
+        phonebook.contact_create(Contact(name, phone, email))
         notifier.notify('contact_action', 'Create', name, phone)
 
 
@@ -41,7 +41,7 @@ def contact_update():
         contact_found_notify(name)
         phone = inputs.input_phone()
         email = inputs.input_email()
-        phonebook.contact_update([name, phone, email])
+        phonebook.contact_update(Contact(name, phone, email))
         notifier.notify('contact_action', 'Update', name, phone)
     except KeyError:
         pass
@@ -58,13 +58,13 @@ def contact_delete():
 
 
 def phonebook_read():
-    for name, value in phonebook.phonebook_get().items():
+    for name, value in phonebook.get().items():
         notifier.notify('contact', name, value)
 
 
 def phonebook_load():
     try:
-        phonebook.phonebook_set(dumper.load(config.DUMP_FILE))
+        phonebook.set(dumper.load(config.DUMP_FILE))
         notifier.notify('phonebook_loaded')
     except FileNotFoundError:
         notifier.notify('start_without_data')
@@ -72,7 +72,7 @@ def phonebook_load():
 
 def phonebook_save():
     try:
-        dumper.save(phonebook.phonebook_get(), config.DUMP_FILE)
+        dumper.save(phonebook.get(), config.DUMP_FILE)
         notifier.notify('phonebook_saved')
     except Exception:
         notifier.notify('phonebook_not_saved')
