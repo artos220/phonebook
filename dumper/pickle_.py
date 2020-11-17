@@ -7,7 +7,7 @@ class PickleDumper:
 
     def load(self):
         with open(self.dump_file, 'rb') as f:
-            return pickle.load(f)
+            return pickle.load(f).copy()
 
     def save(self, data):
         with open(self.dump_file, 'wb') as f:

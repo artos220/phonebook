@@ -9,9 +9,11 @@ class CsvDumper:
         with open(self.dump_file, 'rt') as f:
             reader = csv.reader(f, quoting=csv.QUOTE_MINIMAL)
             data = {}
+            key = 0
+            value = 1
             for row in reader:
-                data[row[0]] = row[1]
-            return data
+                data[row[key]] = row[value]
+            return data.copy()
 
     def save(self, data):
         with open(self.dump_file, 'wt') as f:

@@ -7,7 +7,7 @@ class JsonDumper:
 
     def load(self):
         with open(self.dump_file, 'rt') as f:
-            return json.load(f)
+            return json.load(f).copy()
 
     def save(self, data):
         with open(self.dump_file, 'wt') as f:
