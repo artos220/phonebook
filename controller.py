@@ -1,64 +1,61 @@
 import notifier
-import inputs
 import config_reader as config
 import configured_dumper as dumper
-from model import Phonebook, Contact
+from model import Phonebook
+from contact import Contact, Name, Phone, Email
 
 phonebook = Phonebook({})
 
 
-def contact_found_notify(name):
-    try:
-        phone = phonebook.contact_get(name)
-        notifier.notify('contact_action', 'Found', name, phone)
-    except KeyError:
-        notifier.notify('not_found', name)
-        raise
-
-
 def contact_create():
-    name = inputs.input_name()
-    try:
-        contact_found_notify(name)
-    except KeyError:
-        phone = inputs.input_phone()
-        email = inputs.input_email()
-        phonebook.contact_create(Contact(name, phone, email))
-        notifier.notify('contact_action', 'Create', name, phone)
+    contact = Contact()
+    phonebook[contact.name] = contact
+    notifier.notify('contact_action', 'Create', contact.name, contact.contacts)
 
 
 def contact_read():
     try:
-        name = inputs.input_name()
-        contact_found_notify(name)
+        contact_found_notify(Name().value)
     except KeyError:
         pass
 
 
 def contact_update():
     try:
-        name = inputs.input_name()
+        name = Name().value
         contact_found_notify(name)
-        phone = inputs.input_phone()
-        email = inputs.input_email()
-        phonebook.contact_update(Contact(name, phone, email))
-        notifier.notify('contact_action', 'Update', name, phone)
+
+        phone = Phone().value
+        email = Email().value
+        contact = Contact(name, phone, email)
+
+        phonebook[contact.name] = contact
+        notifier.notify('contact_action', 'Update', contact.name, contact.contacts)
     except KeyError:
         pass
 
 
 def contact_delete():
     try:
-        name = inputs.input_name()
+        name = Name().value
         contact_found_notify(name)
-        phonebook.contact_delete(name)
+        del phonebook[name]
         notifier.notify('delete', name)
     except KeyError:
         pass
 
 
+def contact_found_notify(name):
+    try:
+        contacts = phonebook[name]
+        notifier.notify('contact_action', 'Found', name, contacts)
+    except KeyError:
+        notifier.notify('not_found', name)
+        raise
+
+
 def phonebook_read():
-    for name, value in phonebook.get().items():
+    for name, value in phonebook.items():
         notifier.notify('contact', name, value)
 
 
