@@ -1,16 +1,36 @@
+from contact import Contact, Name, Phone, Email
+
+
 class Phonebook:
     def __init__(self, phonebook: {}):
         self.phonebook = phonebook
 
-    # what is the magic method get/set?
     def get(self) -> {}:
         return self.phonebook.copy()
 
     def set(self, data: {}):
         self.phonebook = data.copy()
 
+    def create_contact(self, contact):
+        contact.set_name(contact.name)
+        if contact.name in self.phonebook:
+            raise KeyError
+        contact.set_phone(contact.phone)
+        contact.set_email(contact.email)
+        self.phonebook[contact.name] = [contact.phone, contact.email]
+        return contact
+
+    def update_contact(self, contact):
+        contact.set_name(contact.name)
+        if contact.name not in self.phonebook:
+            raise KeyError
+        contact.set_phone(contact.phone)
+        contact.set_email(contact.email)
+        self.phonebook[contact.name] = [contact.phone, contact.email]
+        return contact
+
     def __setitem__(self, name, contact):
-        self.phonebook[contact.name] = contact.contacts
+        self.phonebook[name] = contact
 
     def __getitem__(self, name):
         return self.phonebook[name]
