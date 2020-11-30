@@ -7,37 +7,32 @@ from contact import Contact, Name, Phone, Email
 phonebook = Phonebook({})
 
 
-def contact_create():
-    contact = Contact()
-    phonebook[contact.name] = contact
+def contact_create(name, phone, email):
+    contact = Contact(name, phone, email)
+    phonebook.create_contact(contact)
     notifier.notify('contact_action', 'Create', contact.name, contact.contacts)
 
 
-def contact_read():
+def contact_read(name):
     try:
-        contact_found_notify(Name().value)
+        name = Name(name).value
+        contact_found_notify(name)
     except KeyError:
         pass
 
 
-def contact_update():
+def contact_update(name, phone, email):
     try:
-        name = Name().value
-        contact_found_notify(name)
-
-        phone = Phone().value
-        email = Email().value
         contact = Contact(name, phone, email)
-
-        phonebook[contact.name] = contact
+        phonebook.update_contact(contact)
         notifier.notify('contact_action', 'Update', contact.name, contact.contacts)
     except KeyError:
         pass
 
 
-def contact_delete():
+def contact_delete(name):
     try:
-        name = Name().value
+        name = Name(name).value
         contact_found_notify(name)
         del phonebook[name]
         notifier.notify('delete', name)
