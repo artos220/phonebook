@@ -1,6 +1,3 @@
-from contact import Contact, Name, Phone, Email
-
-
 class Phonebook:
     def __init__(self, phonebook: {}):
         self.phonebook = phonebook
@@ -17,7 +14,7 @@ class Phonebook:
             raise KeyError
         contact.set_phone(contact.phone)
         contact.set_email(contact.email)
-        self.phonebook[contact.name] = [contact.phone, contact.email]
+        self.phonebook[contact.name] = contact.contacts
         return contact
 
     def update_contact(self, contact):
@@ -26,7 +23,7 @@ class Phonebook:
             raise KeyError
         contact.set_phone(contact.phone)
         contact.set_email(contact.email)
-        self.phonebook[contact.name] = [contact.phone, contact.email]
+        self.phonebook[contact.name] = contact.contacts
         return contact
 
     def __setitem__(self, name, contact):
