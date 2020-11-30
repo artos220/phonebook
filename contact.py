@@ -8,45 +8,62 @@ def input_value(message):
             return value
 
 
-class Name:
-    def __init__(self):
-        self.value = input_value(constants.MSG_INPUT_NAME)
+class Attribute:
+    def __init__(self, value):
+        self.name = self.name
+        self.msg_input = self.msg_input
+        if value:
+            self.value = value
+        else:
+            self.value = self._validate(input_value(self.msg_input))
+
+    def _validate(self, value):
+        return value
 
     def __repr__(self):
-        return self.value
+        return f'{self.value}'
 
 
-class Phone:
-    def __init__(self):
-        while True:
-            phone = input_value(constants.MSG_INPUT_PHONE)
-            if phone.isdigit():
-                self.value: int = int(phone)
-                break
-
-    def __repr__(self):
-        return self.value
+class Name(Attribute):
+    name = 'Name'
+    msg_input = constants.MSG_INPUT_NAME
 
 
-class Email:
-    def __init__(self):
-        self.value = input_value(constants.MSG_INPUT_EMAIL)
+class Phone(Attribute):
+    name = 'Phone'
+    msg_input = constants.MSG_INPUT_PHONE
 
-    def __repr__(self):
-        return self.value
+    def _validate(self, value):
+        if value.isdigit():
+            return int(value)
+        raise ValueError
+
+
+class Email(Attribute):
+    name = 'Email'
+    msg_input = constants.MSG_INPUT_EMAIL
 
 
 class Contact:
-    def __init__(self, name='', phone='', email=''):
+    def __init__(self, name, phone, email):
         """ self.contacts list has all attr except name """
-        self.name = name if name else Name().value
-        self.phone = phone if phone else Phone().value
-        self.email = email if email else Email().value
-        self.contacts: [] = [value for attr, value in self.__dict__.items() if attr != 'name']
+        self.name = Name(name).value
+        self.phone = Phone(phone).value
+        self.email = Email(email).value
+        self.contacts = [value for attr, value in self.__dict__.items() if attr != 'name']
+
+    def set_name(self, name):
+        self.name = Name(name).value
+
+    def set_phone(self, phone):
+        self.phone = Phone(phone).value
+
+    def set_email(self, email):
+        self.email = Email(email).value
 
     def __repr__(self):
         """ return name=JHON, phone=123456, ... attr=value """
-        repr_ = ''
+        repr_str = ''
         for attr, value in self.__dict__.items():
-            repr_ = f'{repr_}{attr}={value}, '
-        return f'{repr_[:-2]}'
+            repr_str = f'{repr_str}{attr}={value}, '
+        return f'{repr_str[:-2]}'
