@@ -12,7 +12,8 @@ class Attribute:
         self.value = self._validate(View(self.key, self.msg_input).value)  # TODO maybe need to place args into view ?
 
     def _validate(self, value):
-        return value
+        if value:
+            return value
 
     def __repr__(self):
         return f'{self.value}'
@@ -28,9 +29,10 @@ class Phone(Attribute):
     msg_input = constants.MSG_INPUT_PHONE
 
     def _validate(self, value):
-        if str(value).isdigit():
-            return int(value)
-        raise ValueError
+        if value:
+            if str(value).isdigit():
+                return int(value)
+            raise ValueError
 
 
 class Email(Attribute):
