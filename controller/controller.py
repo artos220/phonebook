@@ -1,38 +1,35 @@
-import notifier
-import config_reader as config
-import configured_dumper as dumper
-from model import Phonebook
-from contact import Contact, Name, Phone, Email
+from view import notifier
+from configs import config_reader as config, configured_dumper as dumper
+from model import phonebook
+from model.contact import Name
 
-phonebook = Phonebook({})
+phonebook = phonebook.Phonebook({})
 
 
-def contact_create(name, phone, email):
-    contact = Contact(name, phone, email)
-    phonebook.create_contact(contact)
+def contact_create():
+    contact = phonebook.create_contact()
     notifier.notify('contact_action', 'Create', contact.name, contact.contacts)
 
 
-def contact_read(name):
+def contact_read():
     try:
-        name = Name(name).value
+        name = Name().value
         contact_found_notify(name)
     except KeyError:
         pass
 
 
-def contact_update(name, phone, email):
+def contact_update():
     try:
-        contact = Contact(name, phone, email)
-        phonebook.update_contact(contact)
+        contact = phonebook.update_contact()
         notifier.notify('contact_action', 'Update', contact.name, contact.contacts)
     except KeyError:
         pass
 
 
-def contact_delete(name):
+def contact_delete():
     try:
-        name = Name(name).value
+        name = Name().value
         contact_found_notify(name)
         del phonebook[name]
         notifier.notify('delete', name)

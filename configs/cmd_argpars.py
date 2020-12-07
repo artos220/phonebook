@@ -1,4 +1,5 @@
 import argparse
+from view.argparse_ import ArgParse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-cmd", help="CRUD")
@@ -8,9 +9,4 @@ parser.add_argument("-email", help="contact email", default="")
 parser.add_argument("-help", help="start_phonebook.py -cmd=c -name=Test -phone=111000222", default="")
 
 
-def parse_args(parser):
-    return parser.parse_args()
-
-
-def get_args():
-    return parse_args(parser)
+args = ArgParse(parser)
