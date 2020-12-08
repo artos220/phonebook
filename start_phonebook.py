@@ -2,14 +2,13 @@
 # Description: Simple Phone Book with mvc paradigm
 
 from controller import controller
-from view import notifier
-from configs import config_reader as config
-from configs import messages as constants
+from view.notifier import notify
 from view.view import View
+from configs import config_reader as config, messages as constants
 
 
 def not_found_cmd(cmd_):
-    return lambda: notifier.notify('not_found_cmd', cmd_)
+    return lambda: notify('not_found_cmd', cmd_)
 
 
 menu_action = {'C': controller.contact_create,
@@ -23,7 +22,7 @@ menu_action = {'C': controller.contact_create,
                }
 
 try:
-    notifier.notify('hello')
+    notify('hello')
     controller.phonebook_load()
     if config.INPUT_TYPE.lower() == 'cmd':
         cmd = View('cmd').value
@@ -34,4 +33,4 @@ try:
             menu_action.get(cmd, not_found_cmd(cmd))()
 finally:
     controller.phonebook_save()
-    notifier.notify('exit')
+    notify('exit')
