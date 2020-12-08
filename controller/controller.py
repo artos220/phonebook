@@ -1,5 +1,6 @@
 from view import notifier
-from configs import config_reader as config, configured_dumper as dumper
+from configs import config_reader as config
+from dumper import dumper as dumper
 from model import phonebook
 from model.contact import Name
 

@@ -1,10 +1,6 @@
-from configs import config_reader as config, messages as constants
-
-# configure View
-if config.INPUT_TYPE.lower() == 'cmd':
-    from view.view_ import CmdView as View
-else:
-    from view.view_ import InputView as View
+from configs import messages as constants
+import view
+from view.view import View
 
 
 class Attribute:
