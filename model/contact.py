@@ -1,5 +1,4 @@
 from configs import messages as constants
-import view
 from view.view import View
 
 
@@ -43,7 +42,7 @@ class NullObject:
         return lambda *args, **kwargs: None
 
 
-class ContactsFab:
+class AttributesFab:
     def __new__(cls, key):
         if key == 'Name':
             return Name().value
@@ -64,8 +63,7 @@ class Contact:
 
     def set_attr(self, attr=('Phone', 'Email')):
         self.attr = list(attr)
-        self.contacts = {key: ContactsFab(key) for key in attr}
+        self.contacts = {key: AttributesFab(key) for key in attr}
 
     def __repr__(self):
         return repr(self.contacts)
-

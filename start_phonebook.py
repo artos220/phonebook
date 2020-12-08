@@ -1,8 +1,8 @@
 # Author: Artem Osmina
-# Description: Simple Phone Book
+# Description: Simple Phone Book with mvc paradigm
 
 from controller import controller
-from view import notifier, view
+from view import notifier
 from configs import config_reader as config
 from configs import messages as constants
 from view.view import View
@@ -35,4 +35,3 @@ try:
 finally:
     controller.phonebook_save()
     notifier.notify('exit')
-
