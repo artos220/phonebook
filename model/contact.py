@@ -4,11 +4,16 @@ from view.view import View
 
 class Attribute:
     def __init__(self):
-        self.value = self._validate(View(self.key, self.msg_input).value)  # TODO maybe need to place args into view ?
+        self.value = self._validate(View(self).value)
 
     def _validate(self, value):
-        if value:
-            return value
+        return value
+
+    def get_input_type(self, name):
+        if name == 'msg_input':
+            return self.msg_input
+        else:
+            return self.key
 
     def __repr__(self):
         return f'{self.value}'
@@ -24,10 +29,9 @@ class Phone(Attribute):
     msg_input = constants.MSG_INPUT_PHONE
 
     def _validate(self, value):
-        if value:
-            if str(value).isdigit():
-                return int(value)
-            raise ValueError
+        if str(value).isdigit():
+            return int(value)
+        raise ValueError
 
 
 class Email(Attribute):
@@ -36,6 +40,7 @@ class Email(Attribute):
 
 
 class NullObject:
+    key = ''
     value = ''
 
     def __getattr__(self, item):
@@ -51,7 +56,7 @@ class AttributesFab:
         elif key == 'Email':
             return Email().value
         else:
-            return NullObject()
+            return NullObject().value
 
 
 class Contact:
@@ -66,4 +71,4 @@ class Contact:
         self.contacts = {key: AttributesFab(key) for key in attr}
 
     def __repr__(self):
-        return repr(self.contacts)
+        return f'{self.contacts}'
