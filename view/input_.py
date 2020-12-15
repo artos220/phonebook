@@ -1,6 +1,11 @@
+from view.io_ import IO
+
+data_input_ = IO.data_input_
+
+
 def get_input(message):
     while True:
-        value = input(message).strip().upper()
+        value = data_input_(message).strip().upper()
         return value
         # notifier.notify('input_some_data')
 

@@ -1,6 +1,7 @@
 from configs import messages as constants
+from view.io_ import IO
 
-print_ = print
+print_ = IO.print_
 
 messages = {
     'value_not_digit': lambda val: print_(constants.MSG_VALUE_NOT_DIGIT.format(val)),

@@ -5,8 +5,8 @@ class ArgParse:
     def __init__(self, parser):
         self.parser = parser
 
-    def parse_args(self):
-        return self.parser.parse_args()
+    def parse_args(self, *args, **kwargs):
+        return self.parser.parse_args(*args, **kwargs)
 
 
 parser = argparse.ArgumentParser()

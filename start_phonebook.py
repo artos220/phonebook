@@ -2,24 +2,14 @@
 # Description: Simple Phone Book with mvc paradigm
 
 from controller import controller
-from view.notifier import notify
 from view.view import View
-from configs import config_reader as config, messages as constants
+from view.io_ import IO
+from configs import config_reader as config
+from view.cmd_ import Cmd, not_found_cmd
 
-
-class Cmd:
-    key = 'Cmd'
-    msg_input = constants.MSG_INPUT_CMD
-
-    def get_input_type(self, name):
-        if name == 'msg_input':
-            return self.msg_input
-        else:
-            return self.key
-
-
-def not_found_cmd(cmd_):
-    return lambda: notify('not_found_cmd', cmd_)
+log_ = IO.log_
+log_('start')
+controller.phonebook_load()
 
 
 menu_action = {'C': controller.contact_create,
@@ -32,15 +22,24 @@ menu_action = {'C': controller.contact_create,
                'Q': controller.quit_,
                }
 
-try:
-    notify('hello')
-    controller.phonebook_load()
+
+def start():
     while True:
         cmd = View(Cmd()).value
         menu_action.get(cmd, not_found_cmd(cmd))()
         if config.INPUT_TYPE.lower() == 'cmd':
             break
 
-finally:
+
+def finish():
+    if config.INPUT_MODE.lower() == 'telnet':
+        IO.telnet_server_shutdown()
+
     controller.phonebook_save()
-    notify('exit')
+
+
+if __name__ == "__main__":
+    try:
+        start()
+    finally:
+        finish()
